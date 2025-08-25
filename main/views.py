@@ -42,7 +42,7 @@ from .services.certifications import suggest_role_certifications
 
 
 # PDF export
-from xhtml2pdf import pisa
+# from xhtml2pdf import pisa
 
 
 # ========= In-memory OTP stores (not for production) =========
@@ -841,5 +841,6 @@ def show_report_nontechnical(request):
     if not ctx:
         return redirect("upload_page")
     return render(request, "score_of_non_tech.html", ctx)
+
 
 
