@@ -1,28 +1,28 @@
 import re
 import fitz
 import docx2txt
-import textract
+# import textract
 from collections import OrderedDict
 import base64
 import io
 import matplotlib.pyplot as plt
 
 
-def extract_text_from_resume(file_path):
-    """Extracts text from resume."""
-    if not isinstance(file_path, str):
-        raise ValueError("extract_text_from_resume expects a file path string, got {}".format(type(file_path)))
+# def extract_text_from_resume(file_path):
+#     """Extracts text from resume."""
+#     if not isinstance(file_path, str):
+#         raise ValueError("extract_text_from_resume expects a file path string, got {}".format(type(file_path)))
     
-    text = ""
-    if file_path.lower().endswith(".pdf"):
-        doc = fitz.open(file_path)
-        for page in doc:
-            text += page.get_text()
-    elif file_path.lower().endswith(".docx"):
-        text = docx2txt.process(file_path)
-    elif file_path.lower().endswith(".doc"):
-        text = textract.process(file_path).decode("utf-8", errors="ignore")
-    return text.strip()
+#     text = ""
+#     if file_path.lower().endswith(".pdf"):
+#         doc = fitz.open(file_path)
+#         for page in doc:
+#             text += page.get_text()
+#     elif file_path.lower().endswith(".docx"):
+#         text = docx2txt.process(file_path)
+#     elif file_path.lower().endswith(".doc"):
+#         text = textract.process(file_path).decode("utf-8", errors="ignore")
+#     return text.strip()
 
 
 
@@ -41,135 +41,135 @@ def generate_pie_chart(score_breakdown):
     return base64.b64encode(buf.read()).decode('utf-8')
 
 
-def ats_scoring_for_non_tech(file_path, applicant_name="Candidate"):
-    """ATS scoring for non-tech resumes with full report data for HTML."""
-    text = extract_text_from_resume(file_path)
-    text_lower = text.lower()
+# def ats_scoring_for_non_tech(file_path, applicant_name="Candidate"):
+#     """ATS scoring for non-tech resumes with full report data for HTML."""
+#     text = extract_text_from_resume(file_path)
+#     text_lower = text.lower()
 
-    # Contact/links detection
-    contact_detection = "YES" if re.search(r'\b\d{10}\b', text) and re.search(r'@\w+\.\w+', text) else "NO"
-    linkedin_detection = "YES" if "linkedin.com" in text_lower else "NO"
-    github_detection = "YES" if "github.com" in text_lower else "NO"
+#     # Contact/links detection
+#     contact_detection = "YES" if re.search(r'\b\d{10}\b', text) and re.search(r'@\w+\.\w+', text) else "NO"
+#     linkedin_detection = "YES" if "linkedin.com" in text_lower else "NO"
+#     github_detection = "YES" if "github.com" in text_lower else "NO"
 
-    # Weights from requirement
-    criteria = [
-        ("Format & Layout", 20, "Professional one-column, no tables/headers."),
-        ("File Type & Parsing", 10, "ATS-readable file format."),
-        ("Section Headings & Structure", 10, "Proper headings, reverse chronological."),
-        ("Job-Title & Core Skills", 10, "Target job title and key skills."),
-        ("Dedicated Skills Section", 10, "Clear skills list."),
-        ("Keyword Integration", 10, "Relevant keywords included."),
-        ("Action Verbs", 10, "Strong verbs used in bullets."),
-        ("Quantifiable Results", 10, "Metrics and outcomes provided."),
-        ("Conciseness & Readability", 10, "Under 2 pages, readable."),
-        ("Contact Info & Links", 5, "Name, phone, email, portfolio."),
-        ("Proofreading & Consistency", 5, "No typos, consistent format."),
-    ]
+#     # Weights from requirement
+#     criteria = [
+#         ("Format & Layout", 20, "Professional one-column, no tables/headers."),
+#         ("File Type & Parsing", 10, "ATS-readable file format."),
+#         ("Section Headings & Structure", 10, "Proper headings, reverse chronological."),
+#         ("Job-Title & Core Skills", 10, "Target job title and key skills."),
+#         ("Dedicated Skills Section", 10, "Clear skills list."),
+#         ("Keyword Integration", 10, "Relevant keywords included."),
+#         ("Action Verbs", 10, "Strong verbs used in bullets."),
+#         ("Quantifiable Results", 10, "Metrics and outcomes provided."),
+#         ("Conciseness & Readability", 10, "Under 2 pages, readable."),
+#         ("Contact Info & Links", 5, "Name, phone, email, portfolio."),
+#         ("Proofreading & Consistency", 5, "No typos, consistent format."),
+#     ]
 
-    score_breakdown = OrderedDict()
+#     score_breakdown = OrderedDict()
 
-    # Simple evaluation logic (expandable)
-    for name, weight, explanation in criteria:
-        score = 0
-        insight = explanation
-        recs = []
+#     # Simple evaluation logic (expandable)
+#     for name, weight, explanation in criteria:
+#         score = 0
+#         insight = explanation
+#         recs = []
 
-        if name == "Format & Layout":
-            if "\t" not in text and not re.search(r'(table|column|header|footer)', text_lower):
-                score = weight
-            else:
-                score = weight // 2
-                recs.append("Use a clean one-column layout without tables.")
+#         if name == "Format & Layout":
+#             if "\t" not in text and not re.search(r'(table|column|header|footer)', text_lower):
+#                 score = weight
+#             else:
+#                 score = weight // 2
+#                 recs.append("Use a clean one-column layout without tables.")
 
-        elif name == "File Type & Parsing":
-            if file_path.lower().endswith((".doc", ".docx")):
-                score = weight
-            elif file_path.lower().endswith(".pdf"):
-                score = int(weight * 0.7)
-                recs.append("Use DOC/DOCX for maximum ATS compatibility.")
-            else:
-                score = 0
+#         elif name == "File Type & Parsing":
+#             if file_path.lower().endswith((".doc", ".docx")):
+#                 score = weight
+#             elif file_path.lower().endswith(".pdf"):
+#                 score = int(weight * 0.7)
+#                 recs.append("Use DOC/DOCX for maximum ATS compatibility.")
+#             else:
+#                 score = 0
 
-        elif name == "Section Headings & Structure":
-            if all(h in text_lower for h in ["work experience", "education", "skills"]):
-                score = weight
-            else:
-                score = weight // 2
-                recs.append("Ensure standard section headings are included.")
+#         elif name == "Section Headings & Structure":
+#             if all(h in text_lower for h in ["work experience", "education", "skills"]):
+#                 score = weight
+#             else:
+#                 score = weight // 2
+#                 recs.append("Ensure standard section headings are included.")
 
-        elif name == "Job-Title & Core Skills":
-            if re.search(r'(manager|assistant|executive|analyst|officer)', text_lower):
-                score = weight
-            else:
-                score = weight // 2
+#         elif name == "Job-Title & Core Skills":
+#             if re.search(r'(manager|assistant|executive|analyst|officer)', text_lower):
+#                 score = weight
+#             else:
+#                 score = weight // 2
 
-        elif name == "Dedicated Skills Section":
-            score = weight if "skills" in text_lower else 0
+#         elif name == "Dedicated Skills Section":
+#             score = weight if "skills" in text_lower else 0
 
-        elif name == "Keyword Integration":
-            keywords = ["communication", "teamwork", "leadership", "customer service", "problem solving"]
-            score = min(sum(1 for kw in keywords if kw in text_lower) * 2, weight)
+#         elif name == "Keyword Integration":
+#             keywords = ["communication", "teamwork", "leadership", "customer service", "problem solving"]
+#             score = min(sum(1 for kw in keywords if kw in text_lower) * 2, weight)
 
-        elif name == "Action Verbs":
-            verbs = ["developed", "implemented", "optimized", "managed", "led", "organized", "achieved"]
-            score = min(sum(1 for v in verbs if v in text_lower) * 2, weight)
+#         elif name == "Action Verbs":
+#             verbs = ["developed", "implemented", "optimized", "managed", "led", "organized", "achieved"]
+#             score = min(sum(1 for v in verbs if v in text_lower) * 2, weight)
 
-        elif name == "Quantifiable Results":
-            if re.search(r'\d+%', text) or re.search(r'\d{1,3}(?:,\d{3})*(?:\.\d+)?', text):
-                score = weight
+#         elif name == "Quantifiable Results":
+#             if re.search(r'\d+%', text) or re.search(r'\d{1,3}(?:,\d{3})*(?:\.\d+)?', text):
+#                 score = weight
 
-        elif name == "Conciseness & Readability":
-            wc = len(text.split())
-            if wc <= 800:
-                score = weight
-            elif wc <= 1200:
-                score = weight // 2
+#         elif name == "Conciseness & Readability":
+#             wc = len(text.split())
+#             if wc <= 800:
+#                 score = weight
+#             elif wc <= 1200:
+#                 score = weight // 2
 
-        elif name == "Contact Info & Links":
-            score = weight if contact_detection == "YES" else 0
+#         elif name == "Contact Info & Links":
+#             score = weight if contact_detection == "YES" else 0
 
-        elif name == "Proofreading & Consistency":
-            if len(re.findall(r'\s{2,}', text)) < 5:
-                score = weight
+#         elif name == "Proofreading & Consistency":
+#             if len(re.findall(r'\s{2,}', text)) < 5:
+#                 score = weight
 
-        # Grade
-        pct = (score / weight) * 100
-        if pct >= 85:
-            grade = "Excellent"
-        elif pct >= 70:
-            grade = "Good"
-        elif pct >= 50:
-            grade = "Average"
-        else:
-            grade = "Poor"
+#         # Grade
+#         pct = (score / weight) * 100
+#         if pct >= 85:
+#             grade = "Excellent"
+#         elif pct >= 70:
+#             grade = "Good"
+#         elif pct >= 50:
+#             grade = "Average"
+#         else:
+#             grade = "Poor"
 
-        score_breakdown[name] = {
-            "score": score,
-            "grade": grade,
-            "weight": weight,
-            "sub_criteria": [{"name": name, "score": score, "weight": weight, "insight": insight}],
-            "recommendations": recs
-        }
+#         score_breakdown[name] = {
+#             "score": score,
+#             "grade": grade,
+#             "weight": weight,
+#             "sub_criteria": [{"name": name, "score": score, "weight": weight, "insight": insight}],
+#             "recommendations": recs
+#         }
 
-    total_score = sum(v["score"] for v in score_breakdown.values())
-    total_weight = sum(v["weight"] for v in score_breakdown.values())
-    overall_score_average = int((total_score / total_weight) * 100)
+#     total_score = sum(v["score"] for v in score_breakdown.values())
+#     total_weight = sum(v["weight"] for v in score_breakdown.values())
+#     overall_score_average = int((total_score / total_weight) * 100)
 
-    pie_chart_image = generate_pie_chart(score_breakdown)
+#     pie_chart_image = generate_pie_chart(score_breakdown)
 
-    suggestions = [rec for sec in score_breakdown.values() for rec in sec["recommendations"]]
+#     suggestions = [rec for sec in score_breakdown.values() for rec in sec["recommendations"]]
 
-    return {
-        "applicant_name": applicant_name,
-        "contact_detection": contact_detection,
-        "linkedin_detection": linkedin_detection,
-        "github_detection": github_detection,
-        "ats_score": score_breakdown["Keyword Integration"]["score"],  # Example: ATS = keyword score
-        "overall_score_average": overall_score_average,
-        "score_breakdown": score_breakdown,
-        "pie_chart_image": pie_chart_image,
-        "suggestions": suggestions
-    }
+#     return {
+#         "applicant_name": applicant_name,
+#         "contact_detection": contact_detection,
+#         "linkedin_detection": linkedin_detection,
+#         "github_detection": github_detection,
+#         "ats_score": score_breakdown["Keyword Integration"]["score"],  # Example: ATS = keyword score
+#         "overall_score_average": overall_score_average,
+#         "score_breakdown": score_breakdown,
+#         "pie_chart_image": pie_chart_image,
+#         "suggestions": suggestions
+#     }
 
 
 import re
