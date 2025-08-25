@@ -1,6 +1,4 @@
-This Django application has several dependencies. Here is the `requirements.txt` file listing the necessary libraries:
 
-```
 Django~=5.0
 pisa~=4.0
 xhtml2pdf
@@ -11,4 +9,5 @@ requests~=2.31
 beautifulsoup4~=4.12
 matplotlib~=3.8
 twilio~=8.1
-```
+
+
