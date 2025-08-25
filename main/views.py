@@ -777,26 +777,40 @@ def analyze_resume_v2(request):
 
 
 # ========= PDF download (server-side render) =========
+from django.template.loader import get_template
+from django.http import HttpResponse
+from weasyprint import HTML, CSS
+
 def download_resume_pdf(request):
     """
-    Renders the last analysis context from session into a PDF.
-    Uses 'report_technical.html' by default if not specified; feel free to branch by role.
+    Renders the last analysis context from session into a PDF using WeasyPrint.
     """
-    context = request.session.get("resume_context", {})
-    # Choose template dynamically if you stored role type, else default to technical template:
-    template_path = "resume_result.html"
-    # If you want to decide based on non-tech keys:
-    if context and context.get("github_detection") == "NO" and context.get("role") in ["Human Resources", "Marketing", "Sales", "Finance", "Customer Service"]:
+    context = request.session.get("resume_context_tech") # Assuming you want to use the tech context
+    if not context:
+        # Fallback to non-tech context if technical is not found
+        context = request.session.get("resume_context_nontech")
+    
+    if not context:
+        return HttpResponse("No resume analysis found in session.", status=404)
+
+    # Choose template dynamically based on the context
+    if context.get("role") in ["Human Resources", "Marketing", "Sales", "Finance", "Customer Service"]:
         template_path = "score_of_non_tech.html"
+    else:
+        template_path = "resume_result.html"
 
     template = get_template(template_path)
-    html = template.render(context)
+    html_string = template.render(context)
 
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = 'attachment; filename="resume_report.pdf"'
-    pisa_status = pisa.CreatePDF(html, dest=response)
-    if pisa_status.err:
-        return HttpResponse("We had some errors <pre>" + html + "</pre>")
+
+    # Generate PDF using WeasyPrint
+    try:
+        HTML(string=html_string).write_pdf(response)
+    except Exception as e:
+        return HttpResponse(f"Error generating PDF: {str(e)}", status=500)
+    
     return response
 
 # views.py (add these)
@@ -827,4 +841,5 @@ def show_report_nontechnical(request):
     if not ctx:
         return redirect("upload_page")
     return render(request, "score_of_non_tech.html", ctx)
+
 
