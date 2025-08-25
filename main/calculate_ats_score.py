@@ -1,6 +1,6 @@
 import os
 import re
-import fitz  # PyMuPDF
+import PyMuPDF
 import docx
 import requests
 from django.shortcuts import render
