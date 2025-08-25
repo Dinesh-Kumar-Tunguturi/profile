@@ -1,0 +1,340 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}" />
+  <title>OTP Login / Sign-Up</title>
+  <style>
+    .message { margin: 10px 0; padding: 8px; border-radius: 4px; display:none; }
+    .message.error { background: #f8d7da; color: #842029; }
+    .message.success { background: #d1e7dd; color: #0f5132; }
+
+    /* --- inline country code inside the same input field --- */
+    .input-field .phone-group{
+      display:flex; align-items:center; width:100%;
+      gap:8px;
+    }
+    .input-field .cc-select{
+      min-width: 86px; max-width: 120px;
+      border:none; outline:none; background:transparent; font:inherit; color:inherit;
+      padding:0; /* outer .input-field already has padding */
+      appearance: none; /* keep it compact */
+    }
+    .input-field .cc-select:focus{ outline:none; }
+    .input-field .phone-input{
+      flex:1; border:none; outline:none; background:transparent; font:inherit; color:inherit;
+    }
+
+    /* optional caret for select (kept subtle) */
+    .input-field .cc-wrap{
+      position: relative; display:flex; align-items:center;
+    }
+    .input-field .cc-wrap::after{
+      content:"▾";
+      position:absolute; right:6px; font-size:.8em; opacity:.6; pointer-events:none;
+    }
+    .input-field .cc-select{ padding-right:18px; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="forms-container">
+    <div class="signin-signup">
+
+      <!-- LOGIN (Email -> Email OTP) -->
+      <form id="login-form" class="sign-in-form" onsubmit="return false;">
+        {% csrf_token %}
+        <h2 class="title">Login</h2>
+
+        <div class="input-field">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="login-email" name="email" placeholder="Enter Email" required />
+        </div>
+
+        <div class="input-field" id="login-otp-container" style="display:none;">
+          <i class="fas fa-key"></i>
+          <input type="text" id="login-otp" name="otp" placeholder="Enter OTP" maxlength="6" required />
+        </div>
+
+        <button id="login-send-otp-btn" class="btn solid" type="button">Send OTP</button>
+        <button id="login-verify-otp-btn" class="btn solid" type="button" style="display:none;">Verify OTP</button>
+
+        <div id="login-message" class="message"></div>
+      </form>
+
+      <!-- SIGN-UP (Email + [CC + Mobile] -> Email OTP) -->
+      <form id="signup-form" class="sign-up-form" onsubmit="return false;">
+        {% csrf_token %}
+        <h2 class="title">Sign Up</h2>
+
+        <div class="input-field">
+          <i class="fas fa-envelope"></i>
+          <input type="email" id="signup-email" name="email" placeholder="Enter Email" required />
+        </div>
+
+        <!-- Single field: phone icon + [country code dropdown] + [mobile input] -->
+        <div class="input-field">
+          <i class="fas fa-phone"></i>
+          <div class="phone-group">
+            <span class="cc-wrap">
+              <select id="signup-cc" class="cc-select" aria-label="Country code" required>
+                <option value="+91" selected>+91</option>
+                <option value="+1">+1</option>
+                <option value="+44">+44</option>
+                <option value="+61">+61</option>
+                <option value="+65">+65</option>
+                <option value="+971">+971</option>
+                <option value="+49">+49</option>
+                <option value="+81">+81</option>
+              </select>
+            </span>
+            <input type="tel" id="signup-mobile" class="phone-input" placeholder="Enter Mobile Number" inputmode="numeric" autocomplete="tel-national" required />
+          </div>
+        </div>
+
+        <div class="input-field" id="signup-otp-container" style="display:none;">
+          <i class="fas fa-key"></i>
+          <input type="text" id="signup-otp" name="otp" placeholder="Enter OTP" maxlength="6" required />
+        </div>
+
+        <button id="signup-send-otp-btn" class="btn solid" type="button">Send OTP</button>
+        <button id="signup-verify-otp-btn" class="btn solid" type="button" style="display:none;">Verify OTP</button>
+
+        <div id="signup-message" class="message"></div>
+      </form>
+
+    </div>
+  </div>
+
+  <div class="panels-container">
+    <div class="panel left-panel">
+      <div class="content">
+        <h3>New here?</h3>
+        <p>Sign up and get started with your account.</p>
+        <button class="btn transparent" id="sign-up-btn">Sign up</button>
+      </div>
+      <img src="{% static 'images/log.svg' %}" class="image" alt="Login Image" />
+    </div>
+
+    <div class="panel right-panel">
+      <div class="content">
+        <h3>Already have an account?</h3>
+        <p>Login with your email and OTP.</p>
+        <button class="btn transparent" id="sign-in-btn">Sign in</button>
+      </div>
+      <img src="{% static 'images/register.svg' %}" class="image" alt="Register Image" />
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // CSRF helper
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  // Toggle forms
+  const container = document.querySelector('.container');
+  const signUpBtn = document.getElementById('sign-up-btn');
+  const signInBtn = document.getElementById('sign-in-btn');
+  signUpBtn.addEventListener('click', () => {
+    container.classList.add('sign-up-mode');
+    clearLoginForm(); clearSignupForm();
+  });
+  signInBtn.addEventListener('click', () => {
+    container.classList.remove('sign-up-mode');
+    clearLoginForm(); clearSignupForm();
+  });
+
+  // Elements: Login
+  const loginEmail = document.getElementById('login-email');
+  const loginOtpContainer = document.getElementById('login-otp-container');
+  const loginOtp = document.getElementById('login-otp');
+  const loginSendOtpBtn = document.getElementById('login-send-otp-btn');
+  const loginVerifyOtpBtn = document.getElementById('login-verify-otp-btn');
+  const loginMessage = document.getElementById('login-message');
+
+  // Elements: Signup
+  const signupEmail = document.getElementById('signup-email');
+  const signupCC = document.getElementById('signup-cc');
+  const signupMobile = document.getElementById('signup-mobile');
+  const signupOtpContainer = document.getElementById('signup-otp-container');
+  const signupOtp = document.getElementById('signup-otp');
+  const signupSendOtpBtn = document.getElementById('signup-send-otp-btn');
+  const signupVerifyOtpBtn = document.getElementById('signup-verify-otp-btn');
+  const signupMessage = document.getElementById('signup-message');
+
+  // Helpers
+  function showMessage(elem, message, isError = false) {
+    elem.textContent = message;
+    elem.className = isError ? 'message error' : 'message success';
+    elem.style.display = 'block';
+  }
+  function clearLoginForm() {
+    loginEmail.value = '';
+    loginOtp.value = '';
+    loginOtpContainer.style.display = 'none';
+    loginSendOtpBtn.style.display = 'inline-block';
+    loginVerifyOtpBtn.style.display = 'none';
+    loginMessage.style.display = 'none';
+    loginMessage.textContent = '';
+  }
+  function clearSignupForm() {
+    signupEmail.value = '';
+    signupCC.value = '+91';
+    signupMobile.value = '';
+    signupOtp.value = '';
+    signupOtpContainer.style.display = 'none';
+    signupSendOtpBtn.style.display = 'inline-block';
+    signupVerifyOtpBtn.style.display = 'none';
+    signupMessage.style.display = 'none';
+    signupMessage.textContent = '';
+  }
+
+  const isValidEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
+  // Build E.164: +<countrycode><digits only>
+  function buildE164(countryCode, localNumber) {
+    const cc = String(countryCode || '').replace(/[^\d+]/g, '');  // keep + and digits
+    const digits = String(localNumber || '').replace(/\D+/g, ''); // digits only
+    return cc + digits;
+  }
+  function isValidE164(e164) {
+    const digits = (e164 || '').replace(/\D+/g, '');
+    return digits.length >= 8 && digits.length <= 15;
+  }
+
+  // ===== LOGIN: Send OTP to email =====
+  loginSendOtpBtn.addEventListener('click', () => {
+    const email = loginEmail.value.trim().toLowerCase();
+    if (!isValidEmail(email)) {
+      showMessage(loginMessage, 'Please enter a valid email address.', true);
+      return;
+    }
+    showMessage(loginMessage, 'Sending OTP to your email...');
+    fetch('/send-email-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrftoken },
+      body: new URLSearchParams({ email }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showMessage(loginMessage, 'OTP sent. Please check your inbox.');
+        loginOtpContainer.style.display = 'flex';
+        loginSendOtpBtn.style.display = 'none';
+        loginVerifyOtpBtn.style.display = 'inline-block';
+      } else {
+        showMessage(loginMessage, data.message || 'Error sending OTP.', true);
+      }
+    })
+    .catch(() => showMessage(loginMessage, 'Network error. Please try again.', true));
+  });
+
+  // ===== LOGIN: Verify email OTP =====
+  loginVerifyOtpBtn.addEventListener('click', () => {
+    const email = loginEmail.value.trim().toLowerCase();
+    const otp = loginOtp.value.trim();
+    if (!otp) {
+      showMessage(loginMessage, 'Please enter the OTP.', true);
+      return;
+    }
+    showMessage(loginMessage, 'Verifying OTP...');
+    fetch('/verify-email-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrftoken },
+      body: new URLSearchParams({ email, otp }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showMessage(loginMessage, 'OTP verified! Redirecting...');
+        window.location.href = data.redirect_url || '/upload_resume';
+      } else {
+        showMessage(loginMessage, data.message || 'Invalid OTP.', true);
+      }
+    })
+    .catch(() => showMessage(loginMessage, 'Network error. Please try again.', true));
+  });
+
+  // ===== SIGNUP: Send OTP (to email), posts email + mobile(E.164) =====
+  signupSendOtpBtn.addEventListener('click', () => {
+    const email = signupEmail.value.trim().toLowerCase();
+    const e164Mobile = buildE164(signupCC.value, signupMobile.value);
+
+    if (!isValidEmail(email)) {
+      showMessage(signupMessage, 'Please enter a valid email address.', true);
+      return;
+    }
+    if (!isValidE164(e164Mobile)) {
+      showMessage(signupMessage, 'Please select a country code and enter a valid mobile number.', true);
+      return;
+    }
+    showMessage(signupMessage, 'Sending OTP to your email...');
+    fetch('/send-signup-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrftoken },
+      body: new URLSearchParams({ email, mobile: e164Mobile }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showMessage(signupMessage, 'OTP sent to your email. Please check.');
+        signupOtpContainer.style.display = 'flex';
+        signupSendOtpBtn.style.display = 'none';
+        signupVerifyOtpBtn.style.display = 'inline-block';
+      } else {
+        showMessage(signupMessage, data.message || 'Error sending OTP.', true);
+      }
+    })
+    .catch(() => showMessage(signupMessage, 'Network error. Please try again.', true));
+  });
+
+  // ===== SIGNUP: Verify OTP (email + mobile(E.164) + otp) =====
+  signupVerifyOtpBtn.addEventListener('click', () => {
+    const email = signupEmail.value.trim().toLowerCase();
+    const e164Mobile = buildE164(signupCC.value, signupMobile.value);
+    const otp = signupOtp.value.trim();
+
+    if (!otp) {
+      showMessage(signupMessage, 'Please enter the OTP.', true);
+      return;
+    }
+    showMessage(signupMessage, 'Verifying OTP...');
+    fetch('/verify-signup-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrftoken },
+      body: new URLSearchParams({ email, mobile: e164Mobile, otp }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showMessage(signupMessage, 'OTP verified! Redirecting...');
+        window.location.href = data.redirect_url || '/login';
+      } else {
+        showMessage(signupMessage, data.message || 'Invalid OTP.', true);
+      }
+    })
+    .catch(() => showMessage(signupMessage, 'Network error. Please try again.', true));
+  });
+</script>
+</body>
+</html>

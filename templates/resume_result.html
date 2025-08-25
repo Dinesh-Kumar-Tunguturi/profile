@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Scoring Report</title>
+    <style>
+        body {
+            font-family: 'DM Sans', Arial, sans-serif;
+            background-color: #121212;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 40px;
+        }
+        .report-container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            background-color: #1e1e1e;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            color: #fff;
+            border: 1px solid #333;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #444;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin: 0;
+            color: #fff;
+        }
+        .applicant-info {
+            font-size: 1em;
+            color: #bbb;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+        .square-score-box {
+            width: 120px;
+            height: 120px;
+            min-width: 120px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .score-box, .score-box-red, .score-box-orange {
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .score-box { background-color: #4CAF50; }
+        .score-box-red { background-color: #b92312; }
+        .score-box-orange { background-color: #ff9800; }
+        .score-box .label, .score-box-red .label, .score-box-orange .label {
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+        .score-box .score, .score-box-red .score, .score-box-orange .score {
+            font-size: 4em;
+            line-height: 1.1;
+        }
+        .overall-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .overall-report-card {
+            min-height: 300px;
+        }
+        .overall-skills-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .section-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+        .section-table th, .section-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        .section-table th {
+            color: #bbb;
+            font-weight: normal;
+        }
+        .score-grade {
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .grade-excellent { background-color: #4CAF50; color: white; }
+        .grade-good { background-color: #2196F3; color: white; }
+        .grade-average { background-color: #FF9800; color: white; }
+        .grade-poor { background-color: #dc3545; color: white; }
+        .pie-chart-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        .pie-chart-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .section-card {
+            background-color: #1e1e1e;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-header h3 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+            color: #fff;
+        }
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .sub-criteria-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .sub-criteria-table th, .sub-criteria-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #444;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .sub-criteria-table th {
+            color: #aaa;
+            font-weight: normal;
+        }
+        .sub-criteria-table td {
+            color: #ddd;
+        }
+        .insight-text {
+            color: #888;
+        }
+        .recommendations-section {
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            page-break-inside: avoid;
+    break-inside: avoid;
+        }
+        .recommendations-section h2 {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #fff;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .recommendations-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        .recommendations-list li {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1em;
+            color: #ddd;
+        }
+        .recommendations-section h3 {
+            color: #ff9800;
+        }
+         #report-content {
+    background-color: #121212; /* Match your theme */
+    padding: 40px;
+         }
+    </style>
+</head>
+
+<body>
+{% csrf_token %}
+    <!-- Added wrapper for PDF content -->
+<div id="report-content">
+
+<div class="report-container">
+    <div class="header">
+        <div>
+            <h1>ATS Screening Report</h1>
+            <div class="applicant-info">
+                Applicant Name: {{ applicant_name }}<br>
+                Contact Detection: <span style="color:{% if contact_detection == 'YES' %}#4CAF50{% else %}#FF5722{% endif %};">{{ contact_detection }}</span><br>
+                LinkedIn Id Detection: <span style="color:{% if linkedin_detection == 'YES' %}#4CAF50{% else %}#FF5722{% endif %};">{{ linkedin_detection }}</span><br>
+                GitHub Detection: <span style="color:{% if github_detection == 'YES' %}#4CAF50{% else %}#FF5722{% endif %};">{{ github_detection }}</span>
+            </div>
+        </div>
+        <div style="display: flex; gap: 5px; align-items: center;">
+            <div class="score-box square-score-box">
+                <div class="label">ATS Score</div>
+                <div class="score">{{ ats_score }}</div>
+            </div>
+            <div class="{% if overall_score_average > 80 %}score-box square-score-box{% elif overall_score_average >= 66 %}score-box-orange square-score-box{% else %}score-box-red square-score-box{% endif %}">
+                <div class="label">Profile Score</div>
+                <div class="score">{{ overall_score_average }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overall-section">
+        <div class="card overall-report-card">
+            <h2 class="overall-skills-title">Section-Level Performance</h2>
+            <table class="section-table">
+                <thead>
+                    <tr>
+                        <th>SECTION</th>
+                        <th>SCORE</th>
+                        <th>GRADE</th>
+                        <th>WEIGHT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for section_name, data in score_breakdown.items %}
+                    <tr>
+                        <td>{{ section_name }}</td>
+                        <td>{{ data.score }}/100</td>
+                        <td><span class="score-grade grade-{{ data.grade|lower }}">{{ data.grade }}</span></td>
+                        <td>{{ data.weight }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="card pie-chart-card">
+            <h3>Pie Chart of Overall Representation</h3>
+            {% if pie_chart_image %}
+                <img src="data:image/png;base64,{{ pie_chart_image }}" alt="Pie Chart" style="max-width:100%;">
+            {% endif %}
+        </div>
+    </div>
+
+
+   <div class="content-grid">
+  {% for section_name, data in score_breakdown_ordered %}
+    <div class="card section-card">
+      <div class="section-header">
+        <h3>{{ section_name }}</h3>
+        <div class="score-circle"
+             style="background-color:
+               {% if data.grade == 'Excellent' %}#4CAF50
+               {% elif data.grade == 'Good' %}#2196F3
+               {% elif data.grade == 'Average' %}#FF9800
+               {% else %}#dc3545{% endif %};">
+          {{ data.score }}
+        </div>
+      </div>
+
+      {% if data.sub_criteria %}
+      <table class="sub-criteria-table">
+        <thead>
+          <tr>
+            <th>Sub-Criterion</th>
+            <th>Score</th>
+            <th>Insight</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for criterion in data.sub_criteria %}
+          <tr>
+            <td>{{ criterion.name }}</td>
+            <td>
+              {% if criterion.score is not None %}{{ criterion.score }}{% else %}-{% endif %}
+              {% if criterion.weight %}/{{ criterion.weight }}{% endif %}
+            </td>
+            <td class="insight-text">{{ criterion.insight }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+
+        {% if missing_certifications %}
+    <div class="recommendations-section" style="margin-top: 20px;">
+        <h2>Recommended Certifications for {{ role|default:"Your Role" }}</h2>
+        <p>Based on your resume and target role, you may consider adding these certifications:</p>
+        <ul class="recommendations-list">
+            {% for cert in missing_certifications %}
+                <li>{{ cert }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if suggestions %}
+    <div class="recommendations-section" style="margin-top: 20px;">
+        <h2>Suggestions</h2>
+        <ul class="recommendations-list">
+            {% for suggestion in suggestions %}
+                <li>{{ suggestion }}</li>
+            {% endfor %}
+        </ul>
+<div style="margin-top: 30px; text-align: center;">
+    <a href="https://wa.me/17542675956" target="_blank" 
+       style="display: inline-block; background-color: #25D366; color: white; 
+              font-weight: bold; font-size: 1.1em; text-decoration: none; 
+              padding: 12px 25px; border-radius: 8px; 
+              box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+              transition: background-color 0.3s ease;">
+       📞 Please contact me for more details...
+    </a>
+</div>
+
+    </div>
+    {% endif %}
+
+
+</div>
+
+
+
+
+</div> <!-- End #report-content -->
+
+<!-- ✅ Moved download button outside the report-content so it doesn't appear in PDF -->
+<div style="text-align: center; margin-top: 40px;">
+    <button id="downloadPDF"
+        style="padding: 12px 25px; background-color: #4CAF50; color: white; 
+               font-size: 1.2em; font-weight: bold; border: none; border-radius: 8px;
+               box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer;">
+        📥 Download Report
+    </button>
+</div>
+
+<!-- JS Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("downloadPDF").addEventListener("click", function () {
+    const { jsPDF } = window.jspdf;
+    const reportContent = document.getElementById("report-content");
+
+    // Save original width so we can restore later
+    const originalWidth = reportContent.style.width;
+
+    // Set fixed desktop width for better clarity (adjust if needed)
+    reportContent.style.width = "1200px";
+
+    html2canvas(reportContent, {
+      scale: 4,                      // High scale for sharp text
+      backgroundColor: "#121212",    // Dark theme background
+      scrollY: -window.scrollY       // Capture entire visible content properly
+    }).then(canvas => {
+      // Restore original width immediately after capture
+      reportContent.style.width = originalWidth;
+
+      const imgData = canvas.toDataURL("image/png");
+
+      // Convert px to mm (1 px = 0.264583 mm)
+      const pxToMm = 0.264583;
+
+      // Calculate PDF page width and height dynamically from canvas dimensions
+      const pdfWidth = canvas.width * pxToMm;
+      const pdfHeight = canvas.height * pxToMm;
+
+      // Create PDF with custom page size (dynamic width and height)
+      const pdf = new jsPDF({
+        unit: "mm",
+        format: [pdfWidth, pdfHeight],
+        orientation: "portrait"
+      });
+
+      // Fill background with dark color (optional)
+      pdf.setFillColor(18, 18, 18);
+      pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
+
+      // Add the image (fill entire page)
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+      // Save PDF
+      pdf.save("resume_report.pdf");
+    }).catch(e => {
+      alert("Error generating PDF: " + e.message);
+      reportContent.style.width = originalWidth;  // Ensure restore on error too
+    });
+  });
+});
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
+

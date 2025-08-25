@@ -1,0 +1,398 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>About ApplyWizz - India's #1 Resume Builder & Job Preparation Platform</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description"
+		content="ApplyWizz helps job seekers create personalized resumes and prepare for interviews with easy-to-use AI tools. Get the support you need to stand out and land your ideal job.">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+	<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.png" />
+	<link href="/plugins/ph-icons/icons.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+	
+	<!-- Google Tag Manager -->
+	<script>(function (w, d, s, l, i) {
+			w[l] = w[l] || []; w[l].push({
+				'gtm.start':
+					new Date().getTime(), event: 'gtm.js'
+			}); var f = d.getElementsByTagName(s)[0],
+				j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+					'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+		})(window, document, 'script', 'dataLayer', 'GTM-KWBKXF27');</script>
+	<!-- End Google Tag Manager -->
+
+
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GZW1B5K24"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+		gtag('config', 'G-7GZW1B5K24');
+	</script>
+
+	<!-- Meta Pixel Code -->
+	<script>
+		!function (f, b, e, v, n, t, s) {
+			if (f.fbq) return; n = f.fbq = function () {
+				n.callMethod ?
+					n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+			};
+			if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+			n.queue = []; t = b.createElement(e); t.async = !0;
+			t.src = v; s = b.getElementsByTagName(e)[0];
+			s.parentNode.insertBefore(t, s)
+		}(window, document, 'script',
+			'https://connect.facebook.net/en_US/fbevents.js');
+		fbq('init', '445991161113814');
+		fbq('track', 'PageView');
+	</script>
+	<noscript><img height="1" width="1" style="display:none"
+			src="https://www.facebook.com/tr?id=445991161113814&ev=PageView&noscript=1" /></noscript>
+	<!-- End Meta Pixel Code -->
+
+	<!-- <link href="/css/style.css"     rel="stylesheet"> -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+
+	<link href="/css/global.css" type="text/css" rel="stylesheet" />
+    <link href="/css/menuslidebar.css" type="text/css" rel="stylesheet" />
+
+</head>
+
+<body class="body-wrapper" data-spy="scroll" data-target=".privacy-nav">
+	
+	<!-- Google Tag Manager (noscript) -->
+	<noscript>
+		<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KWBKXF27" height="0" width="0"
+			style="display:none;visibility:hidden"></iframe>
+	</noscript>
+	<!-- End Google Tag Manager (noscript) -->
+
+
+	<!-- <div th:replace="~{fragments/header :: header(cp = 'About')} "></div> -->
+	 <header class="site-header headertb scroll-header headertb ">
+	<div class="overlay" id="overlay"></div>
+	<nav class="navbar navbar-light navbar_top ">
+		<div class="flex items-center" style="padding-left: 50px;"> <!-- Logo/hamburger -->
+                    <div class="flex-shrink-0 flex items-center">
+                        <button type="button" id="mobile-menu-button" class="sm:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <a href="index.html" class="text-xl font-bold text-gray-900 ml-2 sm:ml-0">
+                            <img src="https://storage.googleapis.com/solwizz/website_content/Black%20Version.png" alt="ApplyWizz Logo" class="h-8">
+                        </a>
+                    </div>
+                    </div>
+			<ul class="navbar-nav flex-row d-none d-lg-flex">
+				<li class="nav-item dropdown ">
+					<a class="nav-link dropdown-toggle" href="javascript:void(0)" id="desktopDropdown">Products <span
+							class="arrow_down"></span></a>
+					
+					
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="expert-resume-maker">Expert Resume Makeover</a></li>
+							<li><a class="dropdown-item" href="ai-resume-enhancer">AI Resume Enhancer </a></li>
+							<!-- <li><a class="dropdown-item" href="profile-review-linkedin">Profile Review for LinkedIn</a>
+							</li> -->
+							<li><a class="dropdown-item" href="profile-makeover-linkedin">Makeover for LinkedIn
+									Profile</a>
+							</li>
+							<li><a class="dropdown-item" href="linkedin-post-buddy">Post Buddy for LinkedIn Growth </a>
+							</li>
+						</ul>
+					
+				</li>
+				
+				
+				
+					<li class="nav-item ">
+						<a class="nav-link " href="/about-us">About</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/contact-us" target="_blank">Contact</a>
+					</li>
+				
+				<li class="nav-item ">
+					<a class="nav-link primary-btn login-btn link-white" href="/login">Login</a>
+				</li>
+			</ul>
+			<button class="navbar-toggler d-lg-none" type="button" id="mobileMenuToggle">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+	</nav>
+
+	<div class="side-nav navbar_top" id="sideNav">
+		<span class="close-btn" id="closeSideNav">&times;</span>
+		<ul>
+			<a href="javascript:void(0)" class="mobile-dropdown-toggle nav-link">Products <span
+					class="arrow_down"></span></a>
+			<!-- <ul class="submenu">
+				<li><a class="dropdown-item" href="gold-resume-builder">Expert Resume Makeover</a></li>
+				<li><a class="dropdown-item" href="silver-resume-builder">AI Resume Enhancer  </a></li> 
+				<li><a class="dropdown-item" href="profile-review-linkedin">Profile Review for LinkedIn</a></li>
+				<li><a class="dropdown-item" href="profile-makeover-linkedin">Makeover for LinkedIn Profile</a></li>
+				<li><a class="dropdown-item" href="linkedin-post-buddy">Post Buddy for LinkedIn Growth </a></li>
+		  </ul> -->
+			
+			
+				<ul class="dropdown-menu">
+					<li><a class="dropdown-item" href="expert-resume-maker">Expert Resume Makeover</a></li>
+					<li><a class="dropdown-item" href="ai-resume-enhancer">AI Resume Enhancer </a></li>
+					<li><a class="dropdown-item" href="profile-review-linkedin">Profile Review for LinkedIn</a></li>
+					<li><a class="dropdown-item" href="profile-makeover-linkedin">Makeover for LinkedIn Profile</a>
+					</li>
+					<li><a class="dropdown-item" href="linkedin-post-buddy">Post Buddy for LinkedIn Growth </a></li>
+				</ul>
+			
+			</li>
+
+
+			
+			
+			
+				<li class="nav-item ">
+					<a class="nav-link " href="/about-us">About</a>
+				</li>
+				<li class='nav-item'>
+					<a class="nav-link" href="/contact-us" target="_blank">Contact</a>
+				</li>
+			
+			<li>
+				<a class="nav-link primary-btn btn-login-btn login-btn link-white mobile-nav-btn"
+					href="/login">Login</a>
+			</li>
+		</ul>
+	</div>
+</header>
+
+
+	<div class="container-fluid" style="background: #fff;">
+
+		<div class="container1">
+
+			<div class="container top120">
+
+
+
+				<a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#000000" viewBox="0 0 256 256">
+						<path
+							d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z">
+						</path>
+					</svg><span>Back</span></a>
+
+
+				<div class="st_page">
+
+
+					<h1  class="heading-top1">About Us</h1>
+					<br>
+					<p class="iner_page_heading">ApplyWizz Your Potential</p> <br>
+
+					<p>Welcome to ApplyWizz - we believe your dream job is closer than you think.</p><br>
+
+
+
+					<p>
+						ApplyWizz is more than just a platform; it's a revolution in job seeking. We understand the
+						challenges of the modern job market and the importance of standing out in a sea of qualified
+						candidates. That's why we've dedicated ourselves to ensuring that every job seeker not only
+						meets but exceeds their potential.
+					</p>
+					<br>
+
+
+					<p>
+
+						At ApplyWizz, we believe that everyone deserves a shot at their dream job. Our mission is to
+						bridge the gap between job seekers and their aspirations. With cutting-edge AI technology, we
+						offer customized resumes tailored to showcase your unique skills and experiences for each job
+						application. But we don't stop there. Our comprehensive interview preparation ensures that we
+						help you walk into every interview with confidence, armed with the knowledge and information to
+						impress.
+
+					</p><br>
+
+
+
+
+					<p>
+						While we're proud of what we've achieved so far, we're even more excited about the future. Our
+						team is constantly innovating, researching, and refining our offerings. With many more features
+						on the horizon, we're committed to staying at the forefront of the job-seeking journey, ensuring
+						that our users always have the best tools at their disposal.
+					</p>
+
+
+
+
+					<p> <br><br></p>
+
+				</div>
+
+
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+	<!--============================
+=            Footer            =
+=============================-->
+	<!-- <div th:replace="~{fragments/footer :: footer} "></div> -->
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<!-- <link href="{% static 'css/custom-footer.css' %}" rel="stylesheet"> -->
+<footer class="bg-gray-900 text-white" style="src:'https://cdn.tailwindcss.com';">
+<!-- <footer class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white py-6 mt-10"> -->
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            
+            <!-- Logo and Description -->
+            <div>
+                <a href="landing.html">
+                    <img src="https://storage.googleapis.com/solwizz/website_content/White%20Version.png" alt="ApplyWizz Logo" class="h-16 mb-4">
+                </a>
+                <p class="text-gray-400 text-sm">
+                    Revolutionizing the job application process. Our automated system helps professionals land their dream jobs with less effort and more success.
+                </p>
+                <div class="mt-4 flex space-x-4">
+                    <a href="https://www.facebook.com/profile.php?id=61575570877135" class="text-gray-400 hover:text-white text-xl">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/apply.wizz/" class="text-gray-400 hover:text-white text-xl">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/company/apply-wizz/" class="text-gray-400 hover:text-white text-xl">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Services (Optional) -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Services</h3>
+                <ul class="mt-4 space-y-2 text-gray-300 text-sm">
+                    <!-- <li><a href="#" class="hover:text-white">CV Builder</a></li> -->
+                </ul>
+            </div>
+
+            <!-- Company -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Company</h3>
+                <ul class="mt-4 space-y-2 text-gray-300 text-sm">
+                    <li><a href="about.html" class="hover:text-white">About Us</a></li>
+                </ul>
+            </div>
+
+            <!-- Legal & Contact -->
+            <div>
+                <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Legal</h3>
+                <ul class="mt-4 space-y-2 text-gray-300 text-sm">
+                    <li><a href="privacy-policy.html" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="terms-of-service.html" class="hover:text-white">Terms of Service</a></li>
+                    <li><a href="refund-policy.html" class="hover:text-white">Refund Policy</a></li>
+                </ul>
+
+                <h3 class="mt-6 text-sm font-semibold text-gray-400 uppercase tracking-wider">Contact</h3>
+                <ul class="mt-4 space-y-2 text-gray-300 text-sm">
+                    <li class="flex items-center">
+                        <i class="fas fa-envelope mr-2"></i>
+                        <span>support@applywizz.com</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-phone-alt mr-2 transform scale-x-[-1]"></i>
+                        <span>+1 (754) 267-5956</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-12 border-t border-gray-700 pt-6 text-center text-gray-400 text-sm">
+            &copy; 2025 ApplyWizz. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+	<!-- To Top -->
+	<div class="scroll-top-to">
+		<i class="ti-angle-up"></i>
+	</div>
+
+	<!-- JAVASCRIPTS -->
+	<script src="/plugins/jquery/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	<script src="/js/script.js"></script>
+	<script src="/js/custom.js" type="text/javascript"></script>
+	
+	
+
+	<script type="module">
+		// Import the functions you need from the SDKs you need
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+		import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-analytics.js";
+		// TODO: Add SDKs for Firebase products that you want to use
+		// https://firebase.google.com/docs/web/setup#available-libraries
+
+		// Your web app's Firebase configuration
+		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		const firebaseConfig = {
+			apiKey: "AIzaSyCXnp4pS7SnWt9aHOyqjtoKBA0kfdi15mg",
+			authDomain: "jobprephq.firebaseapp.com",
+			projectId: "jobprephq",
+			storageBucket: "jobprephq.appspot.com",
+			messagingSenderId: "21004174852",
+			appId: "1:21004174852:web:e80d212e0af80171cd5751",
+			measurementId: "G-7GZW1B5K24"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const analytics = getAnalytics(app);
+	</script>
+	<footer>
+		<script type="text/javascript">
+			_linkedin_partner_id = "5557020";
+			window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+			window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+		</script>
+		<script type="text/javascript">
+			(function (l) {
+				if (!l) {
+					window.lintrk = function (a, b) { window.lintrk.q.push([a, b]) };
+					window.lintrk.q = []
+				}
+				var s = document.getElementsByTagName("script")[0];
+				var b = document.createElement("script");
+				b.type = "text/javascript"; b.async = true;
+				b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+				s.parentNode.insertBefore(b, s);
+			})(window.lintrk);
+		</script>
+		<noscript>
+			<img height="1" width="1" style="display:none;" alt=""
+				src="https://px.ads.linkedin.com/collect/?pid=5557020&fmt=gif" />
+		</noscript>
+	</footer>
+
+
+</body>
+
+</html>

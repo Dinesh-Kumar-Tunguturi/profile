@@ -1,0 +1,264 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Upload Resume</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- Lottie -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+
+<style>
+  /* ===== Base page ===== */
+  html, body { height: 100%; margin: 0; font-family: 'Segoe UI', sans-serif; }
+  body{
+    background:linear-gradient(135deg,#e0f7fa,#fce4ec);
+    display:flex;justify-content:center;align-items:center;min-height:100vh;
+  }
+  .form-container{
+    background:#ffffffcc;backdrop-filter:blur(10px);padding:30px 40px;border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);width:100%;max-width:560px;text-align:center
+  }
+  h1{font-size:1.8em;color:#333;margin-bottom:15px}
+  p{font-size:.95em;color:#666;margin-bottom:25px}
+  label{display:block;font-weight:bold;color:#444;margin-bottom:5px;text-align:left}
+  select,input[type="file"],input[type="text"],button{
+    width:100%;padding:12px;border-radius:8px;border:1px solid #ccc;margin-bottom:20px;font-size:1em;transition:border-color .2s
+  }
+  select:focus,input[type="file"]:focus{border-color:#42a5f5;outline:none}
+  button{
+    background:linear-gradient(135deg,#42a5f5,#7e57c2);color:#fff;font-size:1.1em;font-weight:bold;border:none;cursor:pointer;
+    transition:transform .2s,box-shadow .2s
+  }
+  button:hover{transform:translateY(-2px);box-shadow:0 6px 15px rgba(0,0,0,0.2)}
+  #technicalRoles,#nonTechnicalRoles{display:none}
+
+  /* ===== Fullscreen Loader ===== */
+  #loaderOverlay{
+    position:fixed; inset:0; z-index:9999; display:none;
+    background:linear-gradient(135deg,#eef7ff,#fff2ff);
+    align-items:center; justify-content:center; padding:24px;
+  }
+  #loaderOverlay.show{ display:flex; }
+
+  .loader-box{
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    background:#fff; border-radius:24px; padding:28px 24px;
+    box-shadow:0 22px 66px rgba(16,24,40,.18);
+    width:min(92vw, 760px);
+    text-align:center;
+  }
+
+  /* ORDER: 1) plane, 2) bar, 3) sentences */
+  #lottiePlane{ width:clamp(220px,30vw,360px); height:clamp(220px,30vw,360px); }
+  #lottieBar{ width:clamp(300px,70vw,680px); height:clamp(120px,22vw,200px); }
+
+  #loadingText{ font-size:1.08rem; font-weight:800; color:#0f172a; letter-spacing:.2px; }
+  #etaNote{ font-size:.95rem; color:#475569; margin-bottom:4px; }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+  <h1>Profile Analyzer</h1>
+  <p>Upload your resume and choose the domain for tailored scoring.</p>
+
+  <!-- Default action; JS switches by category if needed -->
+  <form id="resumeForm" method="POST" enctype="multipart/form-data" action="{% url 'analyze_resume' %}">
+    {% csrf_token %}
+
+    <label for="domain">Select Category:</label>
+    <select id="domain" name="domain" required>
+      <option value="">-- Select --</option>
+      <option value="technical">Technical</option>
+      <option value="non_technical">Non-Technical</option>
+    </select>
+
+    <div id="technicalRoles">
+      <label for="tech_role">Select Technical Role:</label>
+      <select id="tech_role" name="tech_role">
+        <option value="">-- Select Role --</option>
+        <option value="software_engineer">Software Engineer</option>
+        <option value="data_scientist">Data Scientist</option>
+        <option value="devops_engineer">DevOps Engineer</option>
+        <option value="web_developer">Web Developer</option>
+        <option value="mobile_developer">Mobile App Developer</option>
+      </select>
+
+      <label for="github_username">GitHub Username (optional)</label>
+      <input type="text" id="github_username" name="github_username" placeholder="e.g., octocat" />
+
+      <label for="leetcode_username">LeetCode Username (optional)</label>
+      <input type="text" id="leetcode_username" name="leetcode_username" placeholder="e.g., johndoe123" />
+    </div>
+
+    <div id="nonTechnicalRoles">
+      <label for="nontech_role">Select Non-Technical Domain:</label>
+      <select id="nontech_role" name="nontech_role">
+        <option value="">-- Select Domain --</option>
+        <option value="hr">Human Resources</option>
+        <option value="marketing">Marketing</option>
+        <option value="sales">Sales</option>
+        <option value="finance">Finance</option>
+        <option value="customer_service">Customer Service</option>
+      </select>
+    </div>
+
+    <label for="resume">Upload Resume:</label>
+    <input type="file" name="resume" id="resume" accept=".pdf,.docx,.doc" required>
+
+    <button type="submit" id="submitBtn">Analyze Resume</button>
+  </form>
+</div>
+
+<!-- ===== Fullscreen Loader ===== -->
+<div id="loaderOverlay" aria-hidden="true">
+  <div class="loader-box" role="status" aria-live="polite">
+    <!-- 1) PAPER-PLANE LOTTIE -->
+    <div id="lottiePlane" aria-label="paper-plane"></div>
+
+    <!-- 2) PROGRESS BAR LOTTIE (deterministic fill tied to real wait time) -->
+    <div id="lottieBar" aria-label="progress-bar"></div>
+
+    <!-- 3) SENTENCES -->
+    <div id="loadingText">Initializing…</div>
+    <div id="etaNote"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* Toggle role sections */
+  const domainSelect = document.getElementById("domain");
+  const technicalRoles = document.getElementById("technicalRoles");
+  const nonTechnicalRoles = document.getElementById("nonTechnicalRoles");
+  domainSelect.addEventListener("change", function() {
+    technicalRoles.style.display = this.value === "technical" ? "block" : "none";
+    nonTechnicalRoles.style.display = this.value === "non_technical" ? "block" : "none";
+  });
+
+  /* Lottie asset paths */
+  const LOTTIE_PLANE_PATH = "{% static 'lottie/Loading%2040%20_%20Paperplane.json' %}";
+  /* Put your progress bar JSON at: static/lottie/progress-bar-fast.json */
+  const LOTTIE_BAR_PATH = "{% static 'lottie\progress bar fast.json' %}";
+
+  let planeAnim = null, barAnim = null;
+
+  function startPlane(){
+    if (!window.lottie || planeAnim) return;
+    planeAnim = lottie.loadAnimation({
+      container: document.getElementById('lottiePlane'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: LOTTIE_PLANE_PATH
+    });
+  }
+
+  // Deterministic progress control:
+  // - We disable loop/autoplay
+  // - We manually advance frames based on elapsed time / total buffer
+  function initBar(callback){
+    if (!window.lottie) return;
+    barAnim = lottie.loadAnimation({
+      container: document.getElementById('lottieBar'),
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      path: LOTTIE_BAR_PATH
+    });
+    // Once the JSON is loaded, call back so we know total frames
+    barAnim.addEventListener('DOMLoaded', () => {
+      if (typeof callback === 'function') callback();
+    });
+  }
+
+  function animateBarForDuration(totalMs){
+    const start = performance.now();
+    const totalFrames = barAnim.getDuration(true) || barAnim.totalFrames || 100;
+
+    function tick(now){
+      const elapsed = now - start;
+      const p = Math.min(1, elapsed / totalMs);
+      const frame = Math.floor(p * (totalFrames - 1));
+      barAnim.goToAndStop(frame, true);
+
+      if (p < 1) {
+        requestAnimationFrame(tick);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* Loader sentences (rotate every 3s) */
+  const messages = [
+    "Reading resume and metadata…",
+    "Extracting skills and experience timeline…",
+    "Scoring role relevance…",
+    "Matching market benchmarks…",
+    "Finalizing your profile…"
+  ];
+  let msgIdx = 0;
+  const loadingTextEl = document.getElementById('loadingText');
+  function cycleMessages(){
+    loadingTextEl.textContent = messages[msgIdx];
+    msgIdx = (msgIdx + 1) % messages.length;
+  }
+
+  /* Buffer duration: random between 15–30 seconds */
+  function pickBufferMs(minMs, maxMs){
+    return Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+  }
+
+  const form = document.getElementById('resumeForm');
+  const overlay = document.getElementById('loaderOverlay');
+  const submitBtn = document.getElementById('submitBtn');
+  const etaNote = document.getElementById('etaNote');
+
+  form.addEventListener('submit', (e) => {
+    const domain = domainSelect.value;
+    const hasFile = document.getElementById('resume').files.length > 0;
+    if (!domain || !hasFile) return; // native validation handles UI
+
+    // Route by category if needed
+    if (domain === "non_technical") {
+      form.action = "{% url 'analyze_resume_v2' %}";
+    } else {
+      form.action = "{% url 'analyze_resume' %}";
+    }
+
+    // Show loader
+    e.preventDefault();
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
+    submitBtn.disabled = true;
+
+    // Compute the real wait time (buffer)
+    const BUFFER_MIN_MS = 15000, BUFFER_MAX_MS = 30000;
+    const bufferMs = pickBufferMs(BUFFER_MIN_MS, BUFFER_MAX_MS);
+
+    // Start plane immediately
+    startPlane();
+
+    // Initialize progress bar, then animate exactly over 'bufferMs'
+    initBar(() => {
+      animateBarForDuration(bufferMs);
+    });
+
+    // Sentences + ETA text
+    cycleMessages();
+    const cycleId = setInterval(cycleMessages, 3000);
+    etaNote.textContent = `This may take about ${Math.floor(bufferMs/1000)} seconds…`;
+
+    // Submit when progress finishes
+    setTimeout(() => {
+      clearInterval(cycleId);
+      form.submit();
+    }, bufferMs);
+  });
+})();
+</script>
+
+</body>
+</html>
