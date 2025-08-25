@@ -103,7 +103,7 @@ streamlit==1.48.0
 svglib==1.5.1
 sympy==1.14.0
 tenacity==9.1.2
-textract==1.6.4
+textract-py39==1.6.5
 threadpoolctl==3.6.0
 tinycss2==1.4.0
 tinyhtml5==2.0.0
@@ -131,6 +131,3 @@ xxhash==3.5.0
 yarl==1.20.1
 zopfli==0.2.3.post1
 gunicorn
-
-
-
