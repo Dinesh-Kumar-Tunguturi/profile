@@ -1,6 +1,6 @@
 
 Django~=5.0
-pisa~=4.0
+WeasyPrint
 xhtml2pdf
 PyPDF2~=3.0
 docx2txt~=0.8
@@ -9,5 +9,6 @@ requests~=2.31
 beautifulsoup4~=4.12
 matplotlib~=3.8
 twilio~=8.1
+
 
 
