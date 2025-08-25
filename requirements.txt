@@ -129,3 +129,4 @@ xlsxwriter==3.2.5
 xxhash==3.5.0
 yarl==1.20.1
 zopfli==0.2.3.post1
+gunicorn
