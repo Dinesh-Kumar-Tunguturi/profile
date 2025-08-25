@@ -6,3 +6,5 @@ requests~=2.31
 beautifulsoup4~=4.12
 matplotlib~=3.8
 twilio~=8.1
+gunicorn
+
