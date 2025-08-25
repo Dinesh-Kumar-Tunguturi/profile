@@ -8,4 +8,4 @@ matplotlib~=3.8
 twilio~=8.1
 gunicorn
 django-environ
-
+PyMuPDF~=1.23
