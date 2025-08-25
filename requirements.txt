@@ -93,7 +93,6 @@ rpds-py==0.27.0
 safetensors==0.6.2
 scikit-learn==1.7.1
 scipy==1.16.1
-setuptools==80.9.0
 six==1.16.0
 smmap==5.0.2
 sortedcontainers==2.4.0
@@ -132,5 +131,6 @@ xxhash==3.5.0
 yarl==1.20.1
 zopfli==0.2.3.post1
 gunicorn
+
 
 
