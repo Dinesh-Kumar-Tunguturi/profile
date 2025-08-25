@@ -32,7 +32,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 # 2) core settings that also use env
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=True)
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
+ALLOWED_HOSTS = env.list("'Full_web.onrender.com'", default=["127.0.0.1", "localhost"])
 
 # 3) ✅ PLACE YOUR EMAIL BLOCK HERE
 EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
