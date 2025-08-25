@@ -1,4 +1,5 @@
-
+pip<24.1
+setuptools<66
 aiohappyeyeballs==2.6.1
 aiohttp==3.12.15
 aiohttp-retry==2.9.1
@@ -131,4 +132,5 @@ xxhash==3.5.0
 yarl==1.20.1
 zopfli==0.2.3.post1
 gunicorn
+
 
